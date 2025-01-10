@@ -2,13 +2,14 @@ from rest_framework.permissions import BasePermission
 
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
-        return request.user.userrole.role.name == 'Admin'
+        return hasattr(request.user, 'userrole') and request.user.userrole.role.name == 'Admin'
 
-class IsManager(BasePermission):
+class IsManagerWithRestrictedAccess(BasePermission):
     def has_permission(self, request, view):
-        return request.user.userrole.role.name == 'Manager'
-
-class IsPremiumOrCorporate(BasePermission):
-    def has_permission(self, request, view):
-        user_group = request.user.usergroup.group.name
-        return user_group == 'Premium' or request.user.user_type == 'corporate'
+        if not hasattr(request.user, 'userrole'):
+            return False
+        if request.user.userrole.role.name == 'Manager':
+            if request.user.usergroup.group.name == 'Non-Premium' and request.user.user_type == 'normal':
+                return False
+            return True
+        return False

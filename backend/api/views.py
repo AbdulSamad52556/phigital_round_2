@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView, Response
-from .permissions import IsAdmin, IsManager, IsPremiumOrCorporate
+from .permissions import IsAdmin, IsManagerWithRestrictedAccess
 # Create your views here.
 
 class FlightBookingPage(APIView):
@@ -14,13 +14,13 @@ class HotelBookingPage(APIView):
         return Response({'message':'This is Hotel Booking Page'})
 
 class AssistantFlightBookingPage(APIView):
-    permission_classes = [ IsAdmin | IsManager | IsPremiumOrCorporate ]
+    permission_classes = [ IsAdmin | IsManagerWithRestrictedAccess ]
     
     def get(self, request):
         return Response({'message':'This is AssistantFlightBookingPage'})
 
 class AssistantHotelBookingPage(APIView):
-    permission_classes = [ IsAdmin | IsManager | IsPremiumOrCorporate ]
+    permission_classes = [ IsAdmin | IsManagerWithRestrictedAccess ]
 
     def get(self, request):
         return Response({'message':'This is AssistantHotelBookingPage'})
